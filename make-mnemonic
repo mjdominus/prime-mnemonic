@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+
+from menu import menu
+from select_words import selector
+from dict import dict
+from primes import primes
+
+# bitmap of primes between 10n and 10n+9
+def decade(p, n):
+    return (p.is_prime(10*n+9) * 8 +
+            p.is_prime(10*n+7) * 4 + 
+            p.is_prime(10*n+3) * 2 + 
+            p.is_prime(10*n+1) * 1)
+
+# look forward at most this many decades
+max_len = 5
+if __name__ == '__main__':
+    words = []
+    cur_decade = 1
+    s = selector(dictionary=dict("/usr/share/dict/words"))
+    p = primes()
+    while cur_decade < 100:
+        print("Done up through %d" % (cur_decade*10-1),
+              "...", words[-5:])
+        decades = [ decade(p, n)
+                    for n in
+                    range(cur_decade, cur_decade+max_len) ]
+        m = menu(list(s.words_for(*decades)),
+                 label=0, width=50)
+        next_w = m.select()
+        words.append(next_w[0])
+        cur_decade += next_w[1]
+    

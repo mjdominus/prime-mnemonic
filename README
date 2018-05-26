@@ -1,0 +1,11 @@
+
+Purpose: We want to memorize all the primes up to 1000.
+
+Idea: There are at most 4 primes per decade
+  (which is a sequence 10n .. 10n + 9)
+  Each decade can be represented by 4 bits.
+  Map 4 bits to an English consontant.
+  Then 100 decades corresponds to 100 consonants,
+  which we can embed in around 40 words.
+  These 40 words for a mnemonic for the primes.
+
