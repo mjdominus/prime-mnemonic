@@ -10,12 +10,15 @@ class itt():
 
 class selector():
     def __init__(self, cmap=None, dictionary=None):
-        self.cmap = [ "bb?", "s?[ckq]{1,2}", "d|nd", "ff?",
-                      "g|ng", "h|th",  "ll?", "m|mm",
-                      "nn?", "pp?", "rr?", "s|sh|sch|ss",
-                      "tt?", "v",  "w", "x|zz?",
-        ]
-        assert len(self.cmap) == 16
+        if cmap is None:
+            self.cmap = [ "bb?", "s?[ckq]{1,2}", "d|nd", "ff?",
+                          "g|ng", "h|th",  "ll?", "m|mm",
+                          "nn?", "pp?", "rr?", "s|sh|sch|ss",
+                          "tt?", "v",  "w", "x|zz?",
+            ]
+        else:
+            self.cmap = cmap
+
         self.pats = [ re.compile("(%s)" % s)
                       for s in self.cmap ]
         self.vowel_pat = re.compile("[aeiouy]*")
@@ -37,18 +40,27 @@ class selector():
         return pat
         
     def words_for(self, *n):
+        if len(n) == 0:
+            yield ("", 0)
+            return
+
         n = list(n)
-        while len(n) > 0:
+        for n_consonants in range(len(n), 0, -2):
+            these_consonants = n[:n_consonants]
+            remaining_consonants = n[n_consonants:]
 #            print("N:", n)
-            pat = self.pat_for(*n)
+            pat = self.pat_for(*these_consonants)
             words = self.d.select(pat)
 #            print("Selected %d words" % len(words))
-            yield from [ (w, len(n)) for w in words ]
-            n.pop()
+            yield from [ (" ".join([w,s]), n_consonants+k)
+                         for w in words
+                         for s,k in self.words_for(*remaining_consonants)
+            ]
 
 if __name__ == '__main__':
-    s = selector(dictionary=dict("/usr/share/dict/words"))
-    w = s.words_for(0b1111, 0b1010, 0b0101)
+    s = selector(dictionary=dict("/usr/share/dict/words"),
+                 cmap = ["t", "n", "r", "s"])
+    w = s.words_for(1, 2, 3)
 #    w = s.words_for(0b1111, 0b1010)
     for str in w: print(str)
     
