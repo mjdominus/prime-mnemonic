@@ -10,15 +10,16 @@ class itt():
 
 class selector():
     def __init__(self, cmap=None, dictionary=None):
-        self.cmap = [ "b", "ck", "d", "f",
-                      "g", "h",  "l", "m",
-                      "n", "pq", "r", "s",
-                      "t", "v",  "w", "xz",
+        self.cmap = [ "bb?", "s?[ckq]{1,2}", "d|nd", "ff?",
+                      "g|ng", "h|th",  "ll?", "m|mm",
+                      "nn?", "pp?", "rr?", "s|sh|sch|ss",
+                      "tt?", "v",  "w", "x|zz?",
         ]
         assert len(self.cmap) == 16
-        self.pats = [ re.compile("[%s]" % s)
+        self.pats = [ re.compile("(%s)" % s)
                       for s in self.cmap ]
         self.vowel_pat = re.compile("[aeiouy]*")
+        self.vowel_pat_plus = re.compile("[aeiouy]+")
         self.d = dictionary
 
     def set_dictionary(self, d):
@@ -28,7 +29,9 @@ class selector():
     def pat_for(self, *n):
         pats = [ self.vowel_pat ]
         for num in n:
-            pats += [ self.pats[num], self.vowel_pat ]
+            pats += [ self.pats[num], self.vowel_pat_plus ]
+        pats.pop()
+        pats.append(self.vowel_pat)
         pat = re.compile("^" + "".join([p.pattern for p in pats]) + "$")
         print(pat.pattern)
         return pat
