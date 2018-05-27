@@ -25,9 +25,18 @@ if __name__ == '__main__':
         decades = [ decade(p, n)
                     for n in
                     range(cur_decade, cur_decade+max_len) ]
-        m = menu(list(s.words_for(*decades)),
-                 label=0, width=50)
-        next_w = m.select()
-        words.append(next_w[0])
-        cur_decade += next_w[1]
+        for n_cons in range(len(decades), 0, -1):
+            z = decades[:n_cons]
+            zz = decades[n_cons:]
+            these_words = list(s.words_for(*z))
+            if len(these_words) == 0: continue
+            m1 = menu(these_words,
+                      label=0, width=50)
+            if len(zz):
+                m2 = [ x for x,_ in s.words_for(*zz) ]
+            else:
+                m2 = None
+            next_w = m1.select(trailer=m2)
+            words.append(next_w[0])
+            cur_decade += next_w[1]
     

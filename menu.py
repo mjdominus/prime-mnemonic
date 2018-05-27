@@ -48,12 +48,18 @@ class menu():
             n += self.cols
             print(line)
         
-    def select(self):
+    def select(self, trailer=None):
         if len(self.items) == 1:
             return self.items[0]
         else:
             self.show()
+            if trailer is not None:
+                print(self.filled(trailer))
             return self.items[self.get()]
+
+    def filled(self, items):
+#        s = ", ".join(items)
+        print("      ", str(items))
 
 if __name__ == '__main__':
     m = menu("fish", "dog", "carrot")
